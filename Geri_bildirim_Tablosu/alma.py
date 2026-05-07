@@ -1,19 +1,23 @@
 from flask import jsonify
-import sqlite3
-from db import DB_PATH
-
-
-def connect_db():
-    return sqlite3.connect(DB_PATH)
-
+from db import connect_db
 
 def geri_bildirimleri_listele():
     conn = connect_db()
     cursor = conn.cursor()
 
     cursor.execute("SELECT * FROM geri_bildirimler")
-    rows = cursor.fetchall()
+    data = cursor.fetchall()
 
     conn.close()
+    return jsonify(data)
 
-    return jsonify([dict(row) for row in rows])
+
+def geri_bildirim_getir(id):
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM geri_bildirimler WHERE id=?", (id,))
+    data = cursor.fetchone()
+
+    conn.close()
+    return jsonify(data)
